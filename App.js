@@ -4,11 +4,11 @@ import { Picker } from '@react-native-picker/picker';
 
 export default function App() {
   const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState('male');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  const [activityLevel, setActivityLevel] = useState('');
-  const [healthGoal, setHealthGoal] = useState('');
+  const [activityLevel, setActivityLevel] = useState('sedentary');
+  const [healthGoal, setHealthGoal] = useState('weight_loss');
   const [bmr, setBMR] = useState(0);
 
   const calculateBMR = () => {
