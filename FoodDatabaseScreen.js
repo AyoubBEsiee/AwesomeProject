@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MealPlannerScreen from './MealPlannerScreen';
+import MealPlanContext from './MealPlanContext';
 
 export default function FoodDatabaseScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,7 +11,8 @@ export default function FoodDatabaseScreen() {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedMeal, setSelectedMeal] = useState('');
-  const [mealPlan, setMealPlan] = useState({});
+
+  const { mealPlan, setMealPlan } = useContext(MealPlanContext);
 
   const handleSearch = () => {
     // Code pour effectuer la recherche
@@ -91,12 +93,15 @@ export default function FoodDatabaseScreen() {
         updatedMealPlan[selectedDay] = { [selectedMeal]: [selectedMealItem] };
       }
 
-      setMealPlan(updatedMealPlan);
+      console.log('Meal Plan:', updatedMealPlan);
+
       setSearchQuery('');
       setSelectedDay('');
       setSelectedMeal('');
       setFoodLabel('');
       setCalories(0);
+
+      setMealPlan(updatedMealPlan);
     }
   };
 
@@ -154,7 +159,7 @@ export default function FoodDatabaseScreen() {
 
       <Button title="Add to Meal Plan" onPress={handleConfirmation} />
 
-      <MealPlannerScreen mealPlan={mealPlan} />
+      <MealPlannerScreen setMealPlan={setMealPlan} />
     </View>
   );
 }
