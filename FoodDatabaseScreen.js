@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import MealPlannerScreen from './MealPlannerScreen';
 import MealPlanContext from './MealPlanContext';
 
 export default function FoodDatabaseScreen() {
@@ -18,19 +17,15 @@ export default function FoodDatabaseScreen() {
     // Code pour effectuer la recherche
     console.log('Recherche de:', searchQuery);
 
-    // Make the API request
     fetch(`https://api.edamam.com/api/food-database/v2/parser?app_id=6cf7c9b8&app_key=626cb5eeb43ffd8ae36273bf2557a45c&ingr=${searchQuery}&nutrition-type=cooking`)
       .then((response) => response.json())
       .then((data) => {
-        // Handle the API response data
         console.log('API Response:', data);
 
-        // Extract relevant information from the response
         if (data.parsed.length > 0) {
           const { label, nutrients } = data.parsed[0].food;
           const { ENERC_KCAL } = nutrients;
 
-          // Update the state variables with the extracted values
           setFoodLabel(label);
           setCalories(ENERC_KCAL);
           setSuggestions([]);
@@ -55,7 +50,6 @@ export default function FoodDatabaseScreen() {
     setSearchQuery(text);
 
     if (text.length >= 2) {
-      // Effectuer la recherche des suggestions
       fetch(`https://api.edamam.com/api/food-database/v2/parser?app_id=6cf7c9b8&app_key=626cb5eeb43ffd8ae36273bf2557a45c&ingr=${text}&nutrition-type=cooking&autocomplete=true`)
         .then((response) => response.json())
         .then((data) => {
