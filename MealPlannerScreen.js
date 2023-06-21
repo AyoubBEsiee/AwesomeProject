@@ -3,9 +3,27 @@ import { StyleSheet, View, Text, FlatList } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MealPlanContext from './MealPlanContext';
 
+const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 export default function MealPlannerScreen() {
   const { mealPlan } = useContext(MealPlanContext);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedDay, setSelectedDay] = useState('');
+
+  const handleDayChange = (day) => {
+    setSelectedDay(day);
+  };
+
+  const calculateTotalCalories = (meals) => {
+    let totalCalories = 0;
+
+    Object.values(meals).forEach((meal) => {
+      meal.forEach((item) => {
+        totalCalories += item.calories;
+      });
+    });
+
+    return totalCalories;
+  };
 
   const renderMealItem = ({ item }) => (
     <View style={styles.mealItem}>
@@ -14,21 +32,14 @@ export default function MealPlannerScreen() {
     </View>
   );
 
-  const handleDayChange = (day) => {
-    setSelectedDay(day);
-  };
-
   const renderDayItem = ({ item }) => {
-    const meals = item.meals;
-
-    if (item.day !== selectedDay) {
-      return null;
-    }
+    const meals = mealPlan[item] || {};
+    const totalCalories = calculateTotalCalories(meals);
 
     return (
       <View style={styles.dayItem}>
-        <Text style={styles.day}>{item.day}</Text>
-        {meals.Breakfast && (
+        <Text style={styles.day}>{item}</Text>
+        {meals && meals.Breakfast && (
           <View style={styles.mealContainer}>
             <Text style={styles.mealTitle}>Breakfast</Text>
             <FlatList
@@ -38,7 +49,7 @@ export default function MealPlannerScreen() {
             />
           </View>
         )}
-        {meals.Lunch && (
+        {meals && meals.Lunch && (
           <View style={styles.mealContainer}>
             <Text style={styles.mealTitle}>Lunch</Text>
             <FlatList
@@ -48,7 +59,7 @@ export default function MealPlannerScreen() {
             />
           </View>
         )}
-        {meals.Dinner && (
+        {meals && meals.Dinner && (
           <View style={styles.mealContainer}>
             <Text style={styles.mealTitle}>Dinner</Text>
             <FlatList
@@ -58,7 +69,7 @@ export default function MealPlannerScreen() {
             />
           </View>
         )}
-        {meals.Snack && (
+        {meals && meals.Snack && (
           <View style={styles.mealContainer}>
             <Text style={styles.mealTitle}>Snack</Text>
             <FlatList
@@ -68,14 +79,10 @@ export default function MealPlannerScreen() {
             />
           </View>
         )}
+        <Text style={styles.totalCalories}>Total Calories: {totalCalories}</Text>
       </View>
     );
   };
-
-  const mealPlanData = Object.entries(mealPlan).map(([day, meals]) => ({
-    day,
-    meals,
-  }));
 
   return (
     <View style={styles.container}>
@@ -84,16 +91,20 @@ export default function MealPlannerScreen() {
         onValueChange={handleDayChange}
         style={styles.picker}
       >
-        <Picker.Item label="Select a day" value={null} />
-        {mealPlanData.map((item) => (
-          <Picker.Item key={item.day} label={item.day} value={item.day} />
+        <Picker.Item label="Select a day" value="" />
+        {daysOfWeek.map((day) => (
+          <Picker.Item key={day} label={day} value={day} />
         ))}
       </Picker>
-      <FlatList
-        data={mealPlanData}
-        renderItem={renderDayItem}
-        keyExtractor={(item) => item.day}
-      />
+      {selectedDay !== '' ? (
+        <FlatList
+          data={[selectedDay]}
+          renderItem={renderDayItem}
+          keyExtractor={(item) => item}
+        />
+      ) : (
+        <Text>Please select a day</Text>
+      )}
     </View>
   );
 }
@@ -132,5 +143,9 @@ const styles = StyleSheet.create({
   },
   calories: {
     marginLeft: 8,
+  },
+  totalCalories: {
+    marginTop: 8,
+    fontWeight: 'bold',
   },
 });
