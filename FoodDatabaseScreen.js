@@ -159,7 +159,7 @@ export default function FoodDatabaseScreen() {
 
       <Button title="Add to Meal Plan" onPress={handleConfirmation} />
 
-      <MealPlannerScreen setMealPlan={setMealPlan} />
+
     </View>
   );
 }
